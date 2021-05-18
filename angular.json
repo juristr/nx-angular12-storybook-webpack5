@@ -1,0 +1,154 @@
+{
+  "version": 1,
+  "cli": {
+    "defaultCollection": "@nrwl/angular",
+    "packageManager": "npm"
+  },
+  "defaultProject": "demoapp",
+  "schematics": {
+    "@nrwl/angular": {
+      "application": {
+        "linter": "eslint"
+      },
+      "library": {
+        "linter": "eslint"
+      },
+      "storybook-configuration": {
+        "linter": "eslint"
+      }
+    },
+    "@nrwl/angular:application": {
+      "style": "css",
+      "linter": "eslint",
+      "unitTestRunner": "jest",
+      "e2eTestRunner": "cypress"
+    },
+    "@nrwl/angular:library": {
+      "style": "css",
+      "linter": "eslint",
+      "unitTestRunner": "jest"
+    },
+    "@nrwl/angular:component": {
+      "style": "css"
+    }
+  },
+  "projects": {
+    "demoapp": {
+      "projectType": "application",
+      "root": "apps/demoapp",
+      "sourceRoot": "apps/demoapp/src",
+      "prefix": "storybook-example2",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/apps/demoapp",
+            "index": "apps/demoapp/src/index.html",
+            "main": "apps/demoapp/src/main.ts",
+            "polyfills": "apps/demoapp/src/polyfills.ts",
+            "tsConfig": "apps/demoapp/tsconfig.app.json",
+            "assets": [
+              "apps/demoapp/src/favicon.ico",
+              "apps/demoapp/src/assets"
+            ],
+            "styles": ["apps/demoapp/src/styles.css"],
+            "scripts": []
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kb",
+                  "maximumError": "1mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2kb",
+                  "maximumError": "4kb"
+                }
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "apps/demoapp/src/environments/environment.ts",
+                  "with": "apps/demoapp/src/environments/environment.prod.ts"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "buildOptimizer": false,
+              "optimization": false,
+              "vendorChunk": true,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "configurations": {
+            "production": {
+              "browserTarget": "demoapp:build:production"
+            },
+            "development": {
+              "browserTarget": "demoapp:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "demoapp:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "apps/demoapp/src/**/*.ts",
+              "apps/demoapp/src/**/*.html"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/apps/demoapp"],
+          "options": {
+            "jestConfig": "apps/demoapp/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "demoapp-e2e": {
+      "root": "apps/demoapp-e2e",
+      "sourceRoot": "apps/demoapp-e2e/src",
+      "projectType": "application",
+      "architect": {
+        "e2e": {
+          "builder": "@nrwl/cypress:cypress",
+          "options": {
+            "cypressConfig": "apps/demoapp-e2e/cypress.json",
+            "tsConfig": "apps/demoapp-e2e/tsconfig.e2e.json",
+            "devServerTarget": "demoapp:serve:development"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "demoapp:serve:production"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["apps/demoapp-e2e/**/*.{js,ts}"]
+          }
+        }
+      }
+    }
+  }
+}
